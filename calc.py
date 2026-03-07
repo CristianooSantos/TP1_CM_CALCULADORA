@@ -101,6 +101,8 @@ class CalculatorApp(ft.Container):
 
     def button_clicked(self, e):
         data = e.control.content if hasattr(e.control, 'content') else e.control.text
+        current = self.result.value.replace(" ", "")
+
         
         if self.result.value == "Error" or data == "AC":
             self.result.value = "0"
@@ -141,6 +143,27 @@ class CalculatorApp(ft.Container):
             except:
                 self.result.value = "Error"
 
+        elif data == "CE":
+            self.result.value = "0"
+            self.new_operand = True
+
+        elif data == "\u2B05":
+            if len(self.result.value) > 1:
+                self.result.value = self.result.value[:-1]
+            else:
+                self.result.value = "0"
+
+        elif data == "√":
+            self.result.value = self.result.value + "sqrt(" if self.result.value != "0" else "sqrt("
+            self.new_operand = False
+
+        elif data == "1/x":
+            self.result.value = self.result.value + "1/(" if self.result.value != "0" else "1/("
+            self.new_operand = False
+
+        elif data == "!":
+            self.result.value += "!"
+
         elif data == "+/-":
             try:
                 if float(self.result.value) > 0:
@@ -150,6 +173,7 @@ class CalculatorApp(ft.Container):
             except:
                 pass
 
+        self.result.value = self.format_with_spaces(self.result.value)
         self.update()
 
     def format_number(self, num):
