@@ -164,6 +164,17 @@ class CalculatorApp(ft.Container):
         elif data == "!":
             self.result.value += "!"
 
+        elif data == "^":
+          
+            if self.result.value == "0":
+                return
+
+            if self.result.value[-1] in "+-*/^":
+                self.result.value = self.result.value[:-1] + "^"
+            else:
+                self.result.value += "^"
+            self.new_operand = False
+
         elif data == "+/-":
             try:
                 if float(self.result.value) > 0:
