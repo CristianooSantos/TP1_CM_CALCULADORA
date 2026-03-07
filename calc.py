@@ -25,68 +25,64 @@ class ExtraActionButton(CalcButton):
 class CalculatorApp(ft.Container):
     def init(self):
         self.reset()
-        self.width = 350
+        self.width = 400
         self.bgcolor = ft.Colors.BLACK
         self.border_radius = ft.BorderRadius.all(20)
         self.padding = 20
         
 
-        self.full_expression = ft.Text(value="", color=ft.Colors.WHITE_54, size=15)
+        self.expression_txt = ft.Text(value="", color=ft.Colors.WHITE_54, size=15)
+
 
         self.result = ft.Text(value="0", color=ft.Colors.WHITE, size=30)
 
         self.content = ft.Column(
-            controls=[
-                ft.Column(
-                    controls=[
-                        ft.Row(controls=[self.full_expression], alignment=ft.MainAxisAlignment.END),
-                        ft.Row(controls=[self.result], alignment=ft.MainAxisAlignment.END),
-                    ],
-                    spacing=0,
-                ),
-                ft.Row(
-                    controls=[
-                        ExtraActionButton(content="AC", on_click=self.button_clicked),
-                        ExtraActionButton(content="(", on_click=self.button_clicked), 
-                        ExtraActionButton(content=")", on_click=self.button_clicked), 
-                        ActionButton(content="/", on_click=self.button_clicked),
-                    ]
-                ),
-                ft.Row(
-                    controls=[
-                        DigitButton(content="7", on_click=self.button_clicked),
-                        DigitButton(content="8", on_click=self.button_clicked),
-                        DigitButton(content="9", on_click=self.button_clicked),
-                        ActionButton(content="*", on_click=self.button_clicked),
-                    ]
-                ),
-                ft.Row(
-                    controls=[
-                        DigitButton(content="4", on_click=self.button_clicked),
-                        DigitButton(content="5", on_click=self.button_clicked),
-                        DigitButton(content="6", on_click=self.button_clicked),
-                        ActionButton(content="-", on_click=self.button_clicked),
-                    ]
-                ),
-                ft.Row(
-                    controls=[
-                        DigitButton(content="1", on_click=self.button_clicked),
-                        DigitButton(content="2", on_click=self.button_clicked),
-                        DigitButton(content="3", on_click=self.button_clicked),
-                        ActionButton(content="+", on_click=self.button_clicked),
-                    ]
-                ),
-                ft.Row(
-                    controls=[
-                        DigitButton(
-                            content="0", expand=2, on_click=self.button_clicked
-                        ),
-                        DigitButton(content=".", on_click=self.button_clicked),
-                        ActionButton(content="=", on_click=self.button_clicked),
-                    ]
-                ),
-            ]
-        )
+        controls=[
+            ft.Column(
+                controls=[
+                    ft.Row(controls=[self.expression_txt], alignment=ft.MainAxisAlignment.END),
+                    ft.Row(controls=[self.result], alignment=ft.MainAxisAlignment.END),
+                ],
+                spacing=0,
+            ),
+            ft.Row(controls=[
+                ExtraActionButton(content="AC", on_click=self.button_clicked),
+                ExtraActionButton(content="CE", on_click=self.button_clicked),
+                ExtraActionButton(content="\u2B05", on_click=self.button_clicked),
+                ActionButton(content="/", on_click=self.button_clicked),
+            ]),
+            ft.Row(controls=[
+                ExtraActionButton(content="(", on_click=self.button_clicked),
+                ExtraActionButton(content=")", on_click=self.button_clicked),
+                ExtraActionButton(content="√", on_click=self.button_clicked),
+                ActionButton(content="*", on_click=self.button_clicked),
+            ]),
+            ft.Row(controls=[
+                DigitButton(content="7", on_click=self.button_clicked),
+                DigitButton(content="8", on_click=self.button_clicked),
+                DigitButton(content="9", on_click=self.button_clicked),
+                ActionButton(content="-", on_click=self.button_clicked),
+            ]),
+            ft.Row(controls=[
+                DigitButton(content="4", on_click=self.button_clicked),
+                DigitButton(content="5", on_click=self.button_clicked),
+                DigitButton(content="6", on_click=self.button_clicked),
+                ActionButton(content="+", on_click=self.button_clicked),
+            ]),
+            ft.Row(controls=[
+                DigitButton(content="1", on_click=self.button_clicked),
+                DigitButton(content="2", on_click=self.button_clicked),
+                DigitButton(content="3", on_click=self.button_clicked),
+                ActionButton(content="^", on_click=self.button_clicked),
+            ]),
+            ft.Row(controls=[
+                DigitButton(content="1/x", on_click=self.button_clicked),
+                DigitButton(content="0", on_click=self.button_clicked),
+                DigitButton(content="!", on_click=self.button_clicked),
+                ActionButton(content="=", on_click=self.button_clicked),
+            ]),
+        ]
+)
 
     def button_clicked(self, e):
         data = e.control.content if hasattr(e.control, 'content') else e.control.text
