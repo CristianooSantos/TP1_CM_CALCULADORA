@@ -1,6 +1,7 @@
 from dataclasses import field
 import flet as ft
 import sympy
+import re
 
 @ft.control
 class CalcButton(ft.Button):
@@ -24,6 +25,8 @@ class ExtraActionButton(CalcButton):
 @ft.control
 class CalculatorApp(ft.Container):
     def init(self):
+        
+        
         self.reset()
         self.width = 400
         self.bgcolor = ft.Colors.BLACK
@@ -83,6 +86,18 @@ class CalculatorApp(ft.Container):
             ]),
         ]
 )
+        
+    def format_with_spaces(self, text):
+        clean_text = text.replace(" ", "")
+
+        def replacer(match):
+            num_str = match.group(0)
+            if "." in num_str:
+                parts = num_str.split(".")
+                return "{:,}".format(int(parts[0])).replace(",", " ") + "." + parts[1]
+            return "{:,}".format(int(num_str)).replace(",", " ")
+
+        return re.sub(r'\d+(\.\d+)?', replacer, clean_text)
 
     def button_clicked(self, e):
         data = e.control.content if hasattr(e.control, 'content') else e.control.text
