@@ -1,30 +1,25 @@
 from dataclasses import field
-
 import flet as ft
-
+import sympy
 
 @ft.control
 class CalcButton(ft.Button):
     expand: int = field(default_factory=lambda: 1)
-
 
 @ft.control
 class DigitButton(CalcButton):
     bgcolor: ft.Colors = ft.Colors.WHITE_24
     color: ft.Colors = ft.Colors.WHITE
 
-
 @ft.control
 class ActionButton(CalcButton):
     bgcolor: ft.Colors = ft.Colors.ORANGE
     color: ft.Colors = ft.Colors.WHITE
 
-
 @ft.control
 class ExtraActionButton(CalcButton):
     bgcolor: ft.Colors = ft.Colors.BLUE_GREY_100
     color: ft.Colors = ft.Colors.BLACK
-
 
 @ft.control
 class CalculatorApp(ft.Container):
@@ -34,19 +29,26 @@ class CalculatorApp(ft.Container):
         self.bgcolor = ft.Colors.BLACK
         self.border_radius = ft.BorderRadius.all(20)
         self.padding = 20
-        self.result = ft.Text(value="0", color=ft.Colors.WHITE, size=20)
+        
+
+        self.full_expression = ft.Text(value="", color=ft.Colors.WHITE_54, size=15)
+
+        self.result = ft.Text(value="0", color=ft.Colors.WHITE, size=30)
 
         self.content = ft.Column(
             controls=[
-                ft.Row(
-                    controls=[self.result],
-                    alignment=ft.MainAxisAlignment.END,
+                ft.Column(
+                    controls=[
+                        ft.Row(controls=[self.full_expression], alignment=ft.MainAxisAlignment.END),
+                        ft.Row(controls=[self.result], alignment=ft.MainAxisAlignment.END),
+                    ],
+                    spacing=0,
                 ),
                 ft.Row(
                     controls=[
                         ExtraActionButton(content="AC", on_click=self.button_clicked),
-                        ExtraActionButton(content="+/-", on_click=self.button_clicked),
-                        ExtraActionButton(content="%", on_click=self.button_clicked),
+                        ExtraActionButton(content="(", on_click=self.button_clicked), 
+                        ExtraActionButton(content=")", on_click=self.button_clicked), 
                         ActionButton(content="/", on_click=self.button_clicked),
                     ]
                 ),
@@ -87,85 +89,67 @@ class CalculatorApp(ft.Container):
         )
 
     def button_clicked(self, e):
-        data = e.control.content
-        print(f"Button clicked with data = {data}")
+        data = e.control.content if hasattr(e.control, 'content') else e.control.text
+        
         if self.result.value == "Error" or data == "AC":
             self.result.value = "0"
+            self.full_expression.value = ""
             self.reset()
 
-        elif data in ("1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "."):
+        elif data in ("1", "2", "3", "4", "5", "6", "7", "8", "9", "0", ".", "(", ")"):
             if self.result.value == "0" or self.new_operand:
                 self.result.value = data
                 self.new_operand = False
             else:
-                self.result.value = self.result.value + data
+                self.result.value += data
 
         elif data in ("+", "-", "*", "/"):
-            self.result.value = self.calculate(
-                self.operand1, float(self.result.value), self.operator
-            )
-            self.operator = data
-            if self.result.value == "Error":
-                self.operand1 = "0"
-            else:
-                self.operand1 = float(self.result.value)
-            self.new_operand = True
+            self.result.value += data
+            self.new_operand = False
 
-        elif data in ("="):
-            self.result.value = self.calculate(
-                self.operand1, float(self.result.value), self.operator
-            )
-            self.reset()
+        elif data == "=":
+            try:
+                raw_expression = self.result.value
+                calculation = sympy.sympify(raw_expression).evalf()
+                
+                result_val = self.format_number(calculation)
+                
+                self.full_expression.value = f"{raw_expression} ="
+                self.result.value = str(result_val)
+                self.new_operand = True
+            except Exception:
+                self.result.value = "Error"
 
-        elif data in ("%"):
-            self.result.value = float(self.result.value) / 100
-            self.reset()
+        elif data == "%":
+            try:
+                self.result.value = str(float(self.result.value) / 100)
+            except:
+                self.result.value = "Error"
 
-        elif data in ("+/-"):
-            if float(self.result.value) > 0:
-                self.result.value = "-" + str(self.result.value)
-
-            elif float(self.result.value) < 0:
-                self.result.value = str(
-                    self.format_number(abs(float(self.result.value)))
-                )
+        elif data == "+/-":
+            try:
+                if float(self.result.value) > 0:
+                    self.result.value = "-" + str(self.result.value)
+                else:
+                    self.result.value = str(abs(float(self.result.value)))
+            except:
+                pass
 
         self.update()
 
     def format_number(self, num):
-        if num % 1 == 0:
-            return int(num)
+        num_float = float(num)
+        if num_float % 1 == 0:
+            return int(num_float)
         else:
-            return num
-
-    def calculate(self, operand1, operand2, operator):
-        if operator == "+":
-            return self.format_number(operand1 + operand2)
-
-        elif operator == "-":
-            return self.format_number(operand1 - operand2)
-
-        elif operator == "*":
-            return self.format_number(operand1 * operand2)
-
-        elif operator == "/":
-            if operand2 == 0:
-                return "Error"
-            else:
-                return self.format_number(operand1 / operand2)
+            return round(num_float, 8)
 
     def reset(self):
-        self.operator = "+"
-        self.operand1 = 0
         self.new_operand = True
-
 
 def main(page: ft.Page):
     page.title = "Calc App"
-
     calc = CalculatorApp()
-
     page.add(calc)
-
 
 ft.run(main)
