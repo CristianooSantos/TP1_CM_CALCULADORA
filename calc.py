@@ -104,7 +104,7 @@ class CalculatorApp(ft.Container):
         
         if self.result.value == "Error" or data == "AC":
             self.result.value = "0"
-            self.full_expression.value = ""
+            self.expression_txt.value = ""
             self.reset()
 
         elif data in ("1", "2", "3", "4", "5", "6", "7", "8", "9", "0", ".", "(", ")"):
@@ -120,15 +120,19 @@ class CalculatorApp(ft.Container):
 
         elif data == "=":
             try:
-                raw_expression = self.result.value
-                calculation = sympy.sympify(raw_expression).evalf()
-                
-                result_val = self.format_number(calculation)
-                
-                self.full_expression.value = f"{raw_expression} ="
-                self.result.value = str(result_val)
+                math_expr = current.replace("^", "**").replace("√", "sqrt").replace("!", "factorial")
+                res = sympy.sympify(math_expr).evalf()
+
+                final_val = float(res)
+                if final_val % 1 == 0:
+                    final_val = int(final_val)
+
+                self.expression_txt.value = self.format_with_spaces(current) + " ="
+                self.result.value = self.format_with_spaces(str(round(final_val, 6)))
                 self.new_operand = True
-            except Exception:
+                self.update()
+                return
+            except:
                 self.result.value = "Error"
 
         elif data == "%":
