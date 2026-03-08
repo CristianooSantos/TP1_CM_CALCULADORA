@@ -4,7 +4,6 @@ import sympy
 import re
 from datetime import datetime
 
-
 @ft.control
 class CalcButton(ft.Button):
     expand: int = field(default_factory=lambda: 1)
