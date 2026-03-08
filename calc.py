@@ -275,7 +275,7 @@ class CalculatorApp(ft.Container):
         self.new_operand = True
 
 def main(page: ft.Page):
-    page.title = "Calc App"
+    page.title = "Calc CM A85245"
     page.horizontal_alignment = ft.MainAxisAlignment.CENTER
     calc = CalculatorApp()
     page.add(calc)

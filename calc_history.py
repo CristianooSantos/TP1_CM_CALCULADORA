@@ -11,6 +11,12 @@ class HistoryItem(ft.Container):
         self.expression = expression
         self.result_val = result 
         
+        async def copy_to_clipboard(e):
+            try:
+                await ft.Clipboard().set(str(self.result_val))
+            except Exception:
+                pass
+
         self.content = ft.Column([
             ft.Row([
                 ft.Text(f"#{index} - {datetime.now().strftime('%H:%M:%S')}", size=10, color=ft.Colors.BLUE_200),
@@ -18,7 +24,7 @@ class HistoryItem(ft.Container):
                     ft.IconButton(
                         icon=ft.Icons.COPY, 
                         icon_size=16, 
-                        on_click=lambda _: page.set_clipboard(self.result_val) 
+                        on_click=copy_to_clipboard 
                     ),
                     ft.IconButton(
                         icon=ft.Icons.DELETE, 
