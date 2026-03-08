@@ -159,12 +159,26 @@ class CalculatorApp(ft.Container):
                 pass 
 
     def toggle_history(self, e):
-        if not self.history_loaded:
-            self.load_history(e.page)
-            
-        self.history_column.visible = not self.history_column.visible
-        self.history_column.height = 300 if self.history_column.visible else 0
-        self.update()
+            if not self.history_loaded:
+                self.load_history(e.page)
+                
+            if self.history_column.height == 0:
+                self.history_column.visible = True
+                self.history_column.height = 300
+                try:
+                    e.page.window.height += 300  
+                except Exception:
+                    pass
+            else:
+                self.history_column.height = 0
+                self.history_column.visible = False
+                try:
+                    e.page.window.height -= 300 
+                except Exception:
+                    pass
+                    
+            self.update()
+            e.page.update()
 
     def delete_history_item(self, item):
         page_ref = item.page or self.page
