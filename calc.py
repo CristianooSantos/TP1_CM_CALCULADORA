@@ -30,7 +30,8 @@ class ExtraActionButton(CalcButton):
 
 @ft.control
 class CalculatorApp(ft.Container):
-    def init(self):
+    def __init__(self):
+        super().__init__()
         self.reset()
         self.width = 400
         self.bgcolor = ft.Colors.BLACK
@@ -294,4 +295,11 @@ def main(page: ft.Page):
     calc = CalculatorApp()
     page.add(calc)
 
-ft.run(main)
+if __name__ == "__main__":
+    ft.app(
+        target=main,
+        view=ft.AppView.WEB_BROWSER, 
+        host="0.0.0.0",               
+        port=8080,                    
+        assets_dir="assets"          
+    )
